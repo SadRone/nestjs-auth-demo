@@ -1,21 +1,41 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+// src/auth/auth.controller.ts
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Request,
+  UseGuards,
+  HttpCode,
+} from '@nestjs/common';
+import { Public }       from './public.decorator';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { AuthService }  from './auth.service';
+import { RegisterDto }  from './dto/register.dto';
+import { LoginDto }     from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('register')
   async register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto.email, dto.username, dto.password);
+    const { email, username, password } = dto;
+    return this.authService.register(email, username, password);
   }
 
+  @Public()
+  @HttpCode(200)               // ← ensures login returns 200, not 201
   @Post('login')
   async login(@Body() dto: LoginDto) {
-    return this.authService.login(dto.email, dto.password);
+    const { email, password } = dto;
+    return this.authService.login(email, password);
   }
 
-  
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req: any) {
+    return req.user;
+  }
 }

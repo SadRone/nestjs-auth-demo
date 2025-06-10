@@ -2,36 +2,36 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { UsersModule }  from './users/users.module';
+import { AuthModule }   from './auth/auth.module';
 
 @Module({
   imports: [
-    // 1) .env 파일을 읽어서 전역 ConfigService를 등록
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-
-    // 2) TypeORM을 비동기 설정으로 등록 (ConfigService 주입)
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get<string>('DB_HOST'),
-        port: parseInt(config.get<string>('DB_PORT') ?? '5432', 10),
-        username: config.get<string>('DB_USERNAME'),
-        password: config.get<string>('DB_PASSWORD'),
-        database: config.get<string>('DB_DATABASE'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, // 개발 환경에서만 사용하세요
+      inject:  [ConfigService],
+      useFactory: (cfg: ConfigService) => ({
+        type:        'postgres',
+        host:        cfg.get('DB_HOST'),
+        port:        parseInt(cfg.get('DB_PORT')  ?? '5432', 10),
+        username:    cfg.get('DB_USERNAME'),
+        password:    cfg.get('DB_PASSWORD'),
+        database:    cfg.get('DB_DATABASE'),
+        entities:    [__dirname + '/**/*.entity.{ts,js}'],
+        synchronize: false,
+        // DROP & RE-CREATE all tables on every test-run
+        dropSchema: process.env.NODE_ENV === 'test',
       }),
-      inject: [ConfigService],
     }),
-
-    // 3) 기능별 모듈 불러오기
     UsersModule,
     AuthModule,
+  ],
+  providers: [
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
   ],
 })
 export class AppModule {}

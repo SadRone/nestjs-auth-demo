@@ -1,0 +1,23 @@
+### Register a new user
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "username": "alice",
+  "password": "secret123",
+  "confirmPassword": "secret123"
+}
+
+### Login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "secret123"
+}
+
+### Get profile (paste token below)
+GET http://localhost:3000/auth/profile
+Authorization: Bearer {{ access_token }}
