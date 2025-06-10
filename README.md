@@ -88,4 +88,8 @@ async function bootstrap() {
 bootstrap();
 
 
+###########FINAL STEP: visit local host : port 3000 
+http://localhost:3000/docs
+
+
 
