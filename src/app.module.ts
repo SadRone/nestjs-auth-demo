@@ -22,7 +22,7 @@ import { AuthModule }   from './auth/auth.module';
         password:    cfg.get('DB_PASSWORD'),
         database:    cfg.get('DB_DATABASE'),
         entities:    [__dirname + '/**/*.entity.{ts,js}'],
-        synchronize: false,
+        synchronize: true,
         // DROP & RE-CREATE all tables on every test-run
         dropSchema: process.env.NODE_ENV === 'test',
       }),

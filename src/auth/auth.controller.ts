@@ -8,11 +8,11 @@ import {
   UseGuards,
   HttpCode,
 } from '@nestjs/common';
-import { Public }       from './public.decorator';
+import { Public } from './public.decorator';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { AuthService }  from './auth.service';
-import { RegisterDto }  from './dto/register.dto';
-import { LoginDto }     from './dto/login.dto';
+import { AuthService } from './auth.service';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +26,7 @@ export class AuthController {
   }
 
   @Public()
-  @HttpCode(200)               // ← ensures login returns 200, not 201
+  @HttpCode(200) // <-- Explicitly set HTTP status 200 for login
   @Post('login')
   async login(@Body() dto: LoginDto) {
     const { email, password } = dto;

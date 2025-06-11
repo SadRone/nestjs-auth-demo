@@ -11,12 +11,13 @@ import { IS_PUBLIC_KEY } from './public.decorator';
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) { super(); }
 
-  canActivate(ctx: ExecutionContext) {
+    canActivate(ctx) {
     const isPublic = this.reflector.getAllAndOverride<boolean>(
-      IS_PUBLIC_KEY,
-      [ctx.getHandler(), ctx.getClass()],
+        IS_PUBLIC_KEY,
+        [ctx.getHandler(), ctx.getClass()]
     );
     if (isPublic) return true;
     return super.canActivate(ctx);
-  }
+    }
+
 }
