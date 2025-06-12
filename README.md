@@ -76,3 +76,19 @@ git remote add origin https://github.com/your-username/your-repo.git
 git branch -M main
 git push -u origin main
 
+#if you alrady pushed, avoid overwriting 
+
+Pull = Download updates from the cloud to your computer
+
+Push = Upload your changes from your computer to the cloud
+
+git pull origin main --rebase
+
+git push -u origin main
+
+#algorihtm for push and pull:
+: A → B
+: A → C
+A → B → C
+
+
