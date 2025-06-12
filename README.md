@@ -2,7 +2,7 @@
 
 A NestJS project demonstrating user authentication with:
 
-- User registration (email/username + password + confirmation)  
+- User registration (email/username + password + confirmation) and login
 - JWT token issuance and validation  
 - User login with JWT token response  
 - PostgreSQL database via TypeORM  
@@ -12,7 +12,7 @@ A NestJS project demonstrating user authentication with:
 
 ## Setup
 
-1. Clone the repo:
+1. Clone the repository:
 
 ```bash
 git clone <your-repo-url>
