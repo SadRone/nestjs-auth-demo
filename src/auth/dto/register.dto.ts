@@ -1,4 +1,3 @@
-// src/auth/dto/register.dto.ts
 import {
   registerDecorator,
   ValidationOptions,
@@ -8,7 +7,6 @@ import {
   MinLength,
 } from 'class-validator';
 
-// 1) 바로 위에 decorator 함수를 정의
 function Match(property: string, validationOptions?: ValidationOptions) {
   return (obj: any, propertyName: string) => {
     registerDecorator({
@@ -30,13 +28,16 @@ function Match(property: string, validationOptions?: ValidationOptions) {
 }
 
 export class RegisterDto {
-  @IsNotEmpty({ message: 'Username is required' })
+  @IsNotEmpty()
   username: string;
 
-  @IsEmail({}, { message: 'Invalid email' })
+  @IsEmail()
   email: string;
 
-  @MinLength(6, { message: 'Password must be at least 6 chars' })
+  @MinLength(6)
   password: string;
 
+  @IsNotEmpty()
+  @Match('password', { message: 'Passwords do not match' })
+  confirmPassword: string;
 }

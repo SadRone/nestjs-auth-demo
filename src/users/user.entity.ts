@@ -1,17 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('users')
-@Unique(['email'])
-@Unique(['username'])
+@Entity('user')  // table name in DB
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true })
-  username: string;
+  @Column({ unique: true })
+  email: string;
 
   @Column()
-  email: string;
+  username: string;
 
   @Column()
   password: string;

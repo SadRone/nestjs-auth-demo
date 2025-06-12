@@ -1,0 +1,24 @@
+### Register user
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "username": "tester",
+  "password": "secret123",
+  "confirmPassword": "secret123"
+}
+
+### Login user
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "secret123"
+}
+
+### Get user profile (with JWT token)
+GET http://localhost:3000/auth/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjNGIxNmMwZC05ZDZjLTQ2M2QtYmRhZi00MDIzZmEzZjRmOTgiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3NDk3MDc3OTksImV4cCI6MTc0OTcxMTM5OX0.lP3EKTMB1IuIAc4aIVV-0zvNY7y0q50yZgPvuzkrSUk
+

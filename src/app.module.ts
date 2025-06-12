@@ -1,37 +1,35 @@
-// src/app.module.ts
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { UsersModule }  from './users/users.module';
-import { AuthModule }   from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    // Load environment variables from .env and make ConfigService global
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
+    // TypeORM configuration with async loading of DB credentials from env
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      inject:  [ConfigService],
-      useFactory: (cfg: ConfigService) => ({
-        type:        'postgres',
-        host:        cfg.get('DB_HOST'),
-        port:        parseInt(cfg.get('DB_PORT')  ?? '5432', 10),
-        username:    cfg.get('DB_USERNAME'),
-        password:    cfg.get('DB_PASSWORD'),
-        database:    cfg.get('DB_DATABASE'),
-        entities:    [__dirname + '/**/*.entity.{ts,js}'],
-        synchronize: true,
-        // DROP & RE-CREATE all tables on every test-run
-        dropSchema: process.env.NODE_ENV === 'test',
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: +(configService.get<string>('DB_PORT') ?? 5432),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_DATABASE'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: false, // Use migrations for production, not synchronize:true
       }),
+      inject: [ConfigService],
     }),
+
     UsersModule,
     AuthModule,
-  ],
-  providers: [
-    { provide: APP_GUARD, useClass: JwtAuthGuard },
   ],
 })
 export class AppModule {}

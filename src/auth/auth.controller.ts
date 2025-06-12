@@ -1,4 +1,3 @@
-// src/auth/auth.controller.ts
 import {
   Controller,
   Post,
@@ -26,7 +25,7 @@ export class AuthController {
   }
 
   @Public()
-  @HttpCode(200) // <-- Explicitly set HTTP status 200 for login
+  @HttpCode(200)
   @Post('login')
   async login(@Body() dto: LoginDto) {
     const { email, password } = dto;

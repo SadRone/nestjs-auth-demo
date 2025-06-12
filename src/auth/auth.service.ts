@@ -1,8 +1,7 @@
-// src/auth/auth.service.ts
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService }                       from '@nestjs/jwt';
-import * as bcrypt                          from 'bcrypt';
-import { UsersService }                     from '../users/users.service';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
@@ -11,38 +10,21 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  /**
-   * Register a new user:
-   * 1) hash the password
-   * 2) save the user
-   * 3) issue a JWT
-   */
-  async register(
-    email: string,
-    username: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
+  async register(email: string, username: string, password: string): Promise<{ access_token: string }> {
+    // Check if user exists (avoid duplicates)
+    const existingUser = await this.usersService.findByEmail(email);
+    if (existingUser) {
+      throw new BadRequestException('Email or username already exists.');
+    }
+
     const hash = await bcrypt.hash(password, 10);
-    const user = await this.usersService.create({
-      email,
-      username,
-      password: hash,
-    });
+    const user = await this.usersService.create({ email, username, password: hash });
 
     const payload = { sub: user.id, email: user.email };
     return { access_token: this.jwtService.sign(payload) };
   }
 
-  /**
-   * Log in an existing user:
-   * 1) look them up by email
-   * 2) compare the password
-   * 3) issue a JWT
-   */
-  async login(
-    email: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
+  async login(email: string, password: string): Promise<{ access_token: string }> {
     const user = await this.usersService.findByEmail(email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
